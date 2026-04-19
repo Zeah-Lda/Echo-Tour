@@ -820,9 +820,31 @@ body::before {
   font-variant-numeric: tabular-nums;
   text-align: right;
   white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
 }
 
 .nearby-row.active .nearby-dist { color: var(--vermilion); font-weight: 600; }
+
+/* Locked rows in the Next-Stops list */
+.nearby-row.locked {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+.nearby-row.locked .nearby-name { color: var(--ink-faded); }
+.nearby-row.locked .nearby-sub {
+  color: transparent;
+  text-shadow: 0 0 6px rgba(35, 31, 28, 0.55);
+  user-select: none;
+}
+.nearby-row.locked .nearby-num { color: var(--ink-muted); }
+.nearby-lock {
+  width: 12px;
+  height: 12px;
+  color: var(--ink-faded);
+  flex-shrink: 0;
+}
 
 /* ═══════════════════════════════════════════════════════════════════
    DOSSIER VIEW — the archival card list
@@ -2284,32 +2306,34 @@ body::before {
               <polygon points="150,150 102,102 143,131" fill="rgba(35,31,28,0.55)"/>
             </g>
 
-            <!-- ─── FLEUR-DE-LYS at N (tops the cardinal N point) ─── -->
-            <g id="fleurDeLys" fill="rgba(35,31,28,0.88)">
-              <!-- horizontal ribbon/band at base -->
-              <rect x="138" y="46" width="24" height="3" rx="0.5"/>
-              <!-- central teardrop petal -->
-              <path d="M 150 46 Q 146 32 149 22 Q 150 18 151 22 Q 154 32 150 46 Z"/>
-              <!-- left curled petal -->
-              <path d="M 150 40 Q 136 34 132 46 L 138 46 Q 138 40 148 42 Z"/>
-              <!-- right curled petal -->
-              <path d="M 150 40 Q 164 34 168 46 L 162 46 Q 162 40 152 42 Z"/>
-              <!-- tiny crown bead at very top -->
-              <circle cx="150" cy="16" r="2" fill="rgba(35,31,28,0.85)"/>
-              <line x1="146" y1="20" x2="154" y2="20" stroke="rgba(35,31,28,0.85)" stroke-width="1.1" stroke-linecap="round"/>
-            </g>
+            <!-- ─── CARDINAL LETTERS — outer band, above/below/beside the rose tips ─── -->
+            <!-- N emphasized as the traditional primary marker of a mariner's compass. -->
+            <text x="150" y="30" text-anchor="middle" dominant-baseline="central"
+                  font-family="'Fraunces', serif" font-size="20" font-weight="700"
+                  font-style="italic" fill="#231F1C" letter-spacing="0.02em">N</text>
+            <text x="272" y="150" text-anchor="middle" dominant-baseline="central"
+                  font-family="'Fraunces', serif" font-size="15" font-weight="500"
+                  font-style="italic" fill="#231F1C">E</text>
+            <text x="150" y="272" text-anchor="middle" dominant-baseline="central"
+                  font-family="'Fraunces', serif" font-size="17" font-weight="600"
+                  font-style="italic" fill="#231F1C">S</text>
+            <text x="28" y="150" text-anchor="middle" dominant-baseline="central"
+                  font-family="'Fraunces', serif" font-size="15" font-weight="500"
+                  font-style="italic" fill="#231F1C">W</text>
 
-            <!-- ─── CARDINAL LETTERS (outer letter band, no tick overlap) ─── -->
-            <text x="150" y="133" text-anchor="middle" font-family="'Fraunces', serif" font-size="15" font-weight="600" font-style="italic" fill="#231F1C">N</text>
-            <text x="264" y="155" text-anchor="middle" font-family="'Fraunces', serif" font-size="14" font-weight="500" font-style="italic" fill="#231F1C">E</text>
-            <text x="150" y="172" text-anchor="middle" font-family="'Fraunces', serif" font-size="14" font-weight="500" font-style="italic" fill="#231F1C">S</text>
-            <text x="36"  y="155" text-anchor="middle" font-family="'Fraunces', serif" font-size="14" font-weight="500" font-style="italic" fill="#231F1C">W</text>
-
-            <!-- Intercardinals (smaller, 45° positions on letter-band inner side) -->
-            <text x="231" y="80" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="8.5" font-weight="500" letter-spacing="0.1em" fill="rgba(35,31,28,0.55)">NE</text>
-            <text x="231" y="228" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="8.5" font-weight="500" letter-spacing="0.1em" fill="rgba(35,31,28,0.55)">SE</text>
-            <text x="69"  y="228" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="8.5" font-weight="500" letter-spacing="0.1em" fill="rgba(35,31,28,0.55)">SW</text>
-            <text x="69"  y="80" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="8.5" font-weight="500" letter-spacing="0.1em" fill="rgba(35,31,28,0.55)">NW</text>
+            <!-- Intercardinals (smaller, 45° positions) -->
+            <text x="236" y="74" text-anchor="middle" dominant-baseline="central"
+                  font-family="'IBM Plex Mono', monospace" font-size="8.5" font-weight="500"
+                  letter-spacing="0.1em" fill="rgba(35,31,28,0.55)">NE</text>
+            <text x="236" y="226" text-anchor="middle" dominant-baseline="central"
+                  font-family="'IBM Plex Mono', monospace" font-size="8.5" font-weight="500"
+                  letter-spacing="0.1em" fill="rgba(35,31,28,0.55)">SE</text>
+            <text x="64" y="226" text-anchor="middle" dominant-baseline="central"
+                  font-family="'IBM Plex Mono', monospace" font-size="8.5" font-weight="500"
+                  letter-spacing="0.1em" fill="rgba(35,31,28,0.55)">SW</text>
+            <text x="64" y="74" text-anchor="middle" dominant-baseline="central"
+                  font-family="'IBM Plex Mono', monospace" font-size="8.5" font-weight="500"
+                  letter-spacing="0.1em" fill="rgba(35,31,28,0.55)">NW</text>
 
             <!-- Hotspot dots (dynamically inserted) -->
             <g id="compassDots"></g>
@@ -2387,7 +2411,7 @@ body::before {
       </div>
 
       <!-- Nearby stops list -->
-      <div class="section-label">NEARBY STOPS</div>
+      <div class="section-label">NEXT STOPS</div>
       <div class="nearby-list" id="nearbyList"></div>
 
     </section>
@@ -4934,45 +4958,70 @@ function renderTargetCard() {
 
 function renderNearbyList() {
   const list = document.getElementById('nearbyList');
-  const sorted = sortedByDistance();
-  const top = sorted.slice(0, 5);
+  const target = nextHotspot();
+  const u = currentUserCoords();
 
-  if (top.length === 0 || top[0].distance == null) {
+  // Show the upcoming stops in itinerary ORDER (starting from the next
+  // unvisited one), not by nearest distance. Sequential unlock: only the
+  // very next stop is playable; everything after is locked until the
+  // video before it has been seen.
+  const startIdx = target ? HOTSPOTS.findIndex(h => h.id === target.id) : HOTSPOTS.length;
+  const upcoming = startIdx < 0 ? [] : HOTSPOTS.slice(startIdx, startIdx + 5);
+
+  if (upcoming.length === 0) {
     list.innerHTML = `
       <div style="padding: 20px 12px; text-align: center;">
         <div style="font-family: var(--f-body); font-style: italic; font-size: 13.5px; color: var(--ink-faded); font-weight: 300;">
-          Waiting for location signal…
+          Journey complete — all stops visited.
         </div>
       </div>
     `;
     return;
   }
 
-  const target = nextHotspot();
-  list.innerHTML = top.map(h => {
-    const isVisited = state.visited.has(h.id);
-    const isActive = h.id === target?.id;
+  list.innerHTML = upcoming.map((h, i) => {
+    const isActive = h.id === target?.id;      // next-in-line, unlocked
+    const isLocked = !isActive;                 // everything after is locked
+    const distText = u ? formatDistance(distanceMetres(u, h.coords)) : '—';
+
     const classes = ['nearby-row'];
-    if (isVisited) classes.push('visited');
     if (isActive) classes.push('active');
+    if (isLocked) classes.push('locked');
+
+    const label = h.isIntro ? 'PROLOGUE' : `№${h.id}`;
+    const lockIcon = isLocked
+      ? '<svg class="nearby-lock" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.1" aria-hidden="true"><rect x="3.5" y="6.5" width="7" height="5.5" rx="0.6"/><path d="M5 6.5V4.5a2 2 0 0 1 4 0v2"/></svg>'
+      : '';
+
     return `
       <div class="${classes.join(' ')}" data-id="${h.id}">
-        <div class="nearby-num">№${h.id}</div>
+        <div class="nearby-num">${label}</div>
         <div class="nearby-info">
           <div class="nearby-name">${h.title}</div>
           <div class="nearby-sub">${h.subtitle}</div>
         </div>
-        <div class="nearby-dist">${formatDistance(h.distance)}</div>
+        <div class="nearby-dist">${lockIcon}<span>${distText}</span></div>
       </div>
     `;
   }).join('');
 
-  // Click handlers
   list.querySelectorAll('.nearby-row').forEach(row => {
     row.addEventListener('click', () => {
       const id = row.dataset.id;
       const hs = HOTSPOTS.find(h => h.id === id);
-      if (hs) openPlayer(hs);
+      if (!hs) return;
+      if (!isStopUnlocked(hs.id)) {
+        // Locked — brief shake
+        row.animate([
+          { transform: 'translateX(0)' },
+          { transform: 'translateX(-4px)' },
+          { transform: 'translateX(4px)' },
+          { transform: 'translateX(-2px)' },
+          { transform: 'translateX(0)' },
+        ], { duration: 280, easing: 'ease-out' });
+        return;
+      }
+      openPlayer(hs);
     });
   });
 }
