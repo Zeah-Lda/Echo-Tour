@@ -446,15 +446,40 @@ body::before {
   text-align: center;
 }
 
+/* Soft parchment-coloured plate behind the center text so it reads
+   clearly against the compass rose's dark diamond points. */
+.compass-center-label::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 55%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(circle at center,
+    rgba(253, 249, 238, 0.96) 0%,
+    rgba(253, 249, 238, 0.92) 45%,
+    rgba(253, 249, 238, 0.55) 75%,
+    rgba(253, 249, 238, 0) 100%);
+  z-index: 0;
+  pointer-events: none;
+}
+
+.compass-center-label > * { position: relative; z-index: 1; }
+
 .distance-readout {
   font-family: var(--f-display);
-  font-variation-settings: 'opsz' 96, 'wght' 400, 'SOFT' 30;
-  font-size: clamp(40px, 12vw, 56px);
+  font-variation-settings: 'opsz' 96, 'wght' 500, 'SOFT' 30;
+  font-size: clamp(42px, 12.5vw, 60px);
   color: var(--ink);
   letter-spacing: -0.02em;
   line-height: 1;
   font-feature-settings: 'tnum' 1;
   transition: color 0.3s var(--ease-out), transform 0.3s var(--ease-spring);
+  text-shadow:
+    0 0 6px var(--paper-light),
+    0 0 10px rgba(253, 249, 238, 0.85);
 }
 
 .distance-readout.close {
@@ -474,20 +499,24 @@ body::before {
 
 .distance-unit {
   font-family: var(--f-mono);
-  font-size: 10px;
+  font-size: 10.5px;
   letter-spacing: 0.28em;
-  color: var(--ink-faded);
+  color: var(--ink-soft);
+  font-weight: 500;
   text-transform: uppercase;
-  margin-top: 2px;
+  margin-top: 4px;
+  text-shadow: 0 0 5px var(--paper-light), 0 0 8px var(--paper-light);
 }
 
 .distance-label {
   font-family: var(--f-mono);
-  font-size: 8.5px;
+  font-size: 9.5px;
   letter-spacing: 0.3em;
-  color: var(--ink-faded);
+  color: var(--ink-soft);
+  font-weight: 500;
   text-transform: uppercase;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
+  text-shadow: 0 0 5px var(--paper-light), 0 0 8px var(--paper-light);
 }
 
 /* Current target name inside compass — at bottom arc */
