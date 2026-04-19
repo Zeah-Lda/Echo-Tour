@@ -165,22 +165,6 @@ body::before {
   background: linear-gradient(180deg, rgba(247, 241, 225, 0.6), transparent);
   position: relative;
   z-index: 10;
-  overflow: hidden;
-  max-height: 200px;
-  transition:
-    max-height 0.32s var(--ease-out),
-    padding 0.32s var(--ease-out),
-    opacity 0.22s var(--ease-out),
-    border-bottom-color 0.22s linear;
-}
-
-.masthead--hidden {
-  max-height: 0;
-  padding-top: 0;
-  padding-bottom: 0;
-  opacity: 0;
-  pointer-events: none;
-  border-bottom-color: transparent;
 }
 
 .masthead::after {
@@ -1340,6 +1324,15 @@ body::before {
   display: flex;
   gap: 6px;
   z-index: 20;
+  transition:
+    transform 0.32s var(--ease-out),
+    opacity 0.22s var(--ease-out);
+}
+
+.tabs--hidden {
+  transform: translateY(110%);
+  opacity: 0;
+  pointer-events: none;
 }
 
 .tabs::before {
@@ -4510,28 +4503,27 @@ function updateActiveViewFromScroll() {
   }
 }
 
-// Masthead behaviour: hidden by default, reveals briefly while the user
-// scrolls (or swipes pages), then fades out ~1.4 s after motion stops.
-let mastheadIdleTimer = null;
-function revealMasthead(idleMs = 1400) {
-  const m = document.querySelector('.masthead');
-  if (!m) return;
-  m.classList.remove('masthead--hidden');
-  if (mastheadIdleTimer) clearTimeout(mastheadIdleTimer);
-  mastheadIdleTimer = setTimeout(() => {
-    m.classList.add('masthead--hidden');
+// Bottom-tabs behaviour: hidden by default, slides in briefly while the
+// user scrolls (or swipes pages), then fades out ~1.4 s after motion stops.
+let tabsIdleTimer = null;
+function revealTabs(idleMs = 1400) {
+  const t = document.querySelector('.tabs');
+  if (!t) return;
+  t.classList.remove('tabs--hidden');
+  if (tabsIdleTimer) clearTimeout(tabsIdleTimer);
+  tabsIdleTimer = setTimeout(() => {
+    t.classList.add('tabs--hidden');
   }, idleMs);
 }
 
 function updateMastheadForActiveView() {
-  // Page swipe — give the user a brief glimpse of the masthead.
-  revealMasthead(1400);
+  // Page swipe — give the user a brief glimpse of the bottom tabs.
+  revealTabs(1400);
 }
 
-function bindMastheadAutoHide() {
-  const reveal = () => revealMasthead(1400);
+function bindTabsAutoHide() {
+  const reveal = () => revealTabs(1400);
   document.querySelectorAll('.stage > .view').forEach(v => {
-    // Scroll event is the canonical trigger...
     let raf = null;
     v.addEventListener('scroll', () => {
       if (raf != null) return;
@@ -4540,18 +4532,15 @@ function bindMastheadAutoHide() {
         if (v.dataset.view === state.activeView) reveal();
       });
     }, { passive: true });
-    // ...but touchmove is a more reliable fallback on iOS,
-    // and also catches the user's finger-drag before scroll settles.
     v.addEventListener('touchmove', () => {
       if (v.dataset.view === state.activeView) reveal();
     }, { passive: true });
-    // Mouse wheel on desktop
     v.addEventListener('wheel', () => {
       if (v.dataset.view === state.activeView) reveal();
     }, { passive: true });
   });
   // Start hidden
-  document.querySelector('.masthead')?.classList.add('masthead--hidden');
+  document.querySelector('.tabs')?.classList.add('tabs--hidden');
 }
 
 // ─── RENDERERS ────────────────────────────────────────────────────
@@ -5337,8 +5326,8 @@ function init() {
     });
   });
 
-  // Masthead auto-hide on vertical scroll within each page.
-  bindMastheadAutoHide();
+  // Bottom tabs auto-hide; reveal on scroll or page swipe.
+  bindTabsAutoHide();
   // Re-align on resize so page widths stay correct.
   window.addEventListener('resize', () => {
     const idx = pageIndexByName(state.activeView);
