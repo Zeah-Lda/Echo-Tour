@@ -2048,230 +2048,6 @@ body::before {
 .drawer-ack strong { font-style: normal; font-family: var(--f-display); font-size: 13px; font-weight: 600; }
 
 /* ═══════════════════════════════════════════════════════════════════
-   DEMO PANEL — fake GPS for testing
-   ═══════════════════════════════════════════════════════════════════ */
-
-.demo-toggle {
-  position: absolute;
-  bottom: calc(env(safe-area-inset-bottom, 0px) + 86px);
-  right: 16px;
-  height: 40px;
-  padding: 0 14px 0 12px;
-  border-radius: 20px;
-  background: var(--ink);
-  color: var(--paper-light);
-  border: 1px solid var(--ink);
-  box-shadow: 0 2px 0 var(--vermilion), var(--shadow-md);
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  cursor: pointer;
-  z-index: 25;
-  font-family: var(--f-mono);
-  font-size: 10px;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  font-weight: 600;
-  transition: all 0.2s var(--ease-out);
-}
-
-.demo-toggle::before {
-  content: '';
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: var(--vermilion);
-  box-shadow: 0 0 0 2px rgba(184, 68, 31, 0.25);
-  animation: gps-pulse 1.6s ease-in-out infinite;
-}
-
-.demo-toggle:active {
-  transform: translateY(2px);
-  box-shadow: 0 0 0 var(--vermilion), var(--shadow-sm);
-}
-.demo-toggle svg { width: 13px; height: 13px; }
-
-/* Inline banner shown in compass view when no GPS yet */
-.no-signal-banner {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 13px 16px;
-  background: var(--linen);
-  border: 1px solid var(--edge);
-  border-left: 3px solid var(--gold);
-  border-radius: 2px;
-  margin-top: -10px;
-  cursor: pointer;
-  transition: all 0.2s var(--ease-out);
-}
-
-.no-signal-banner:active { background: var(--paper-dark); transform: translateY(1px); }
-
-.no-signal-banner svg { flex-shrink: 0; width: 20px; height: 20px; color: var(--gold-dark); }
-
-.no-signal-banner strong {
-  display: block;
-  font-family: var(--f-display);
-  font-variation-settings: 'opsz' 14, 'wght' 500;
-  font-style: italic;
-  font-size: 14.5px;
-  color: var(--ink);
-  line-height: 1.15;
-  letter-spacing: -0.005em;
-}
-
-.no-signal-banner span {
-  display: block;
-  font-family: var(--f-mono);
-  font-size: 9.5px;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: var(--ink-faded);
-  margin-top: 2px;
-}
-
-.no-signal-banner-body { flex: 1; min-width: 0; }
-
-.no-signal-banner .arrow {
-  color: var(--vermilion);
-  font-family: var(--f-mono);
-  font-size: 14px;
-  font-weight: 600;
-}
-
-.demo-panel {
-  position: absolute;
-  right: 18px;
-  bottom: calc(env(safe-area-inset-bottom, 0px) + 144px);
-  width: calc(100% - 36px);
-  max-width: 300px;
-  background: var(--ink);
-  color: var(--paper-light);
-  border-radius: 4px;
-  padding: 14px;
-  z-index: 24;
-  box-shadow: var(--shadow-lg);
-  transform: translateY(10px) scale(0.95);
-  opacity: 0;
-  pointer-events: none;
-  transform-origin: bottom right;
-  transition: all 0.28s var(--ease-spring);
-  border: 1px solid rgba(253, 249, 238, 0.08);
-}
-
-.demo-panel.show {
-  transform: translateY(0) scale(1);
-  opacity: 1;
-  pointer-events: auto;
-}
-
-.demo-panel::after {
-  content: '';
-  position: absolute;
-  bottom: -8px;
-  right: 30px;
-  width: 14px;
-  height: 14px;
-  background: var(--ink);
-  transform: rotate(45deg);
-  border-right: 1px solid rgba(253, 249, 238, 0.08);
-  border-bottom: 1px solid rgba(253, 249, 238, 0.08);
-}
-
-.demo-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding-bottom: 10px;
-  margin-bottom: 10px;
-  border-bottom: 1px dashed rgba(253, 249, 238, 0.15);
-  font-family: var(--f-mono);
-  font-size: 9.5px;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: var(--gold-soft);
-}
-
-.demo-header b { color: var(--vermilion-soft); }
-
-.demo-list {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  margin-bottom: 12px;
-}
-
-.demo-item {
-  padding: 9px 10px;
-  font-family: var(--f-mono);
-  font-size: 11px;
-  color: rgba(253, 249, 238, 0.75);
-  cursor: pointer;
-  border-radius: 2px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 10px;
-  transition: all 0.15s var(--ease-out);
-  border: 1px solid transparent;
-}
-
-.demo-item:hover, .demo-item:active {
-  background: rgba(253, 249, 238, 0.06);
-  color: var(--linen);
-  border-color: rgba(253, 249, 238, 0.1);
-}
-
-.demo-item em {
-  font-style: normal;
-  color: var(--gold-soft);
-  font-weight: 500;
-  letter-spacing: 0.05em;
-  flex-shrink: 0;
-}
-
-.demo-item span {
-  min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  font-family: var(--f-body);
-  font-size: 12px;
-  font-weight: 300;
-}
-
-.demo-hint {
-  font-family: var(--f-body);
-  font-style: italic;
-  font-size: 11px;
-  font-weight: 300;
-  color: rgba(253, 249, 238, 0.5);
-  line-height: 1.5;
-  padding: 8px 10px;
-  background: rgba(253, 249, 238, 0.04);
-  border-radius: 2px;
-  border-left: 2px solid var(--vermilion);
-}
-
-.demo-exit {
-  margin-top: 10px;
-  padding: 10px;
-  width: 100%;
-  background: transparent;
-  color: var(--paper-light);
-  border: 1px dashed rgba(253, 249, 238, 0.2);
-  border-radius: 2px;
-  font-family: var(--f-mono);
-  font-size: 9.5px;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  cursor: pointer;
-}
-
-.demo-exit:active { background: rgba(253, 249, 238, 0.08); }
-
-/* ═══════════════════════════════════════════════════════════════════
    ARRIVAL ANIMATION — the magic moment
    ═══════════════════════════════════════════════════════════════════ */
 
@@ -2456,18 +2232,6 @@ body::before {
     <!-- ── COMPASS VIEW ─────────────────────────────────────── -->
     <section class="view compass-view active" data-view="compass">
 
-      <!-- Shown when GPS hasn't resolved — invites demo mode -->
-      <div class="no-signal-banner hidden" id="noSignalBanner">
-        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.3">
-          <circle cx="10" cy="10" r="8"/>
-          <path d="M10 6v4l2.5 2.5"/>
-        </svg>
-        <div class="no-signal-banner-body">
-          <strong>No signal yet</strong>
-          <span>Tap to preview with Demo Mode</span>
-        </div>
-        <span class="arrow">→</span>
-      </div>
 
       <div class="section-label">THE COMPASS</div>
 
@@ -2631,26 +2395,6 @@ body::before {
     </button>
   </nav>
 
-  <!-- Demo panel (dev tool) ───────────────────────────────────── -->
-  <button class="demo-toggle" id="demoToggle" aria-label="Demo mode">
-    <svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5">
-      <path d="M3 9l3 3 9-9"/>
-      <path d="M15 9v5a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h3"/>
-    </svg>
-    <span>Demo</span>
-  </button>
-
-  <div class="demo-panel" id="demoPanel">
-    <div class="demo-header">
-      <span><b>SIMULATE</b> · GPS</span>
-      <span id="demoStatus">OFF</span>
-    </div>
-    <div class="demo-list" id="demoList"></div>
-    <div class="demo-hint">
-      Tap a stop to teleport there. Use this to test triggering without walking.
-    </div>
-    <button class="demo-exit" id="demoExit">Return to Real GPS</button>
-  </div>
 
 </div>
 
@@ -4608,8 +4352,6 @@ const state = {
   visited: new Set(),
   activeView: 'compass',
   watchStarted: false,
-  demoMode: false,
-  demoCoords: null,
   settings: {
     triggerRadius: 30,
     autoPlay: true,
@@ -4689,7 +4431,6 @@ function formatDistShort(m) {
 // ─── HOTSPOT HELPERS ──────────────────────────────────────────────
 
 function currentUserCoords() {
-  if (state.demoMode && state.demoCoords) return state.demoCoords;
   return state.userCoords;
 }
 
@@ -5197,52 +4938,16 @@ function renderProgress() {
   }).join('');
 }
 
-function renderDemoList() {
-  const list = document.getElementById('demoList');
-  list.innerHTML = HOTSPOTS.map(h => `
-    <div class="demo-item" data-id="${h.id}">
-      <em>№${h.id}</em>
-      <span>${h.title}</span>
-    </div>
-  `).join('');
-
-  list.querySelectorAll('.demo-item').forEach(item => {
-    item.addEventListener('click', () => {
-      const h = HOTSPOTS.find(x => x.id === item.dataset.id);
-      if (!h) return;
-      state.demoMode = true;
-      state.demoCoords = h.coords;
-      // Reset the trigger lock and unvisit this stop so the full arrival
-      // flow fires — this is a testing tool.
-      state.visited.delete(h.id);
-      state.lastTriggered = null;
-      document.getElementById('demoStatus').textContent = `AT №${h.id}`;
-      document.getElementById('demoPanel').classList.remove('show');
-      updateGpsDot();
-      renderAll();
-      setTimeout(() => checkProximity(), 120);
-    });
-  });
-}
-
 function renderAll() {
   renderMasthead();
   renderCompassDots();
   renderCompassNeedle();
   renderTargetCard();
   renderNearbyList();
-  renderSignalBanner();
   // All three main views live side-by-side in the pager now, so keep them
   // all up to date — the cost is small and it avoids flicker on swipe.
   renderDossier();
   renderProgress();
-}
-
-function renderSignalBanner() {
-  const banner = document.getElementById('noSignalBanner');
-  if (!banner) return;
-  const hasSignal = !!currentUserCoords();
-  banner.classList.toggle('hidden', hasSignal);
 }
 
 // ─── GEOLOCATION ──────────────────────────────────────────────────
@@ -5285,10 +4990,6 @@ function startWatching() {
 function updateGpsDot() {
   const dot = document.getElementById('gpsDot');
   dot.classList.remove('active', 'acquiring', 'denied');
-  if (state.demoMode) {
-    dot.classList.add('acquiring');
-    return;
-  }
   if (state.permissionStatus === 'granted') dot.classList.add('active');
   else if (state.permissionStatus === 'denied') dot.classList.add('denied');
   else dot.classList.add('acquiring');
@@ -5519,23 +5220,6 @@ function bindUI() {
     if (t) markVisited(t.id);
   });
 
-  // Demo
-  document.getElementById('demoToggle').addEventListener('click', () => {
-    const panel = document.getElementById('demoPanel');
-    panel.classList.toggle('show');
-  });
-  document.getElementById('noSignalBanner').addEventListener('click', () => {
-    document.getElementById('demoPanel').classList.add('show');
-  });
-  document.getElementById('demoExit').addEventListener('click', () => {
-    state.demoMode = false;
-    state.demoCoords = null;
-    document.getElementById('demoStatus').textContent = 'OFF';
-    document.getElementById('demoPanel').classList.remove('show');
-    updateGpsDot();
-    renderAll();
-  });
-
   // Onboarding — "Begin the Walk" scrolls to the compass page and starts GPS.
   document.getElementById('startBtn').addEventListener('click', () => {
     goToPage('compass', true);
@@ -5557,7 +5241,7 @@ function bindUI() {
   });
 
   // Prevent iOS body-bounce, but allow touch-scroll inside any scrollable region.
-  const SCROLL_ALLOW = '.view, .drawer, .player-stage, .onboarding, .demo-panel';
+  const SCROLL_ALLOW = '.view, .drawer, .player-stage, .onboarding';
   document.addEventListener('touchmove', e => {
     if (e.target.closest(SCROLL_ALLOW)) return;
     e.preventDefault();
@@ -5638,7 +5322,6 @@ function init() {
   }
 
   renderCompassTicks();
-  renderDemoList();
   bindUI();
   syncSettingsUI();
   renderAll();
