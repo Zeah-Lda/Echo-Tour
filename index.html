@@ -4988,7 +4988,7 @@ function renderNearbyList() {
     if (isActive) classes.push('active');
     if (isLocked) classes.push('locked');
 
-    const label = h.isIntro ? 'PROLOGUE' : `№${h.id}`;
+    const label = `№${h.id}`;
     const lockIcon = isLocked
       ? '<svg class="nearby-lock" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.1" aria-hidden="true"><rect x="3.5" y="6.5" width="7" height="5.5" rx="0.6"/><path d="M5 6.5V4.5a2 2 0 0 1 4 0v2"/></svg>'
       : '';
