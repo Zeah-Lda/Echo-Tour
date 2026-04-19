@@ -2230,38 +2230,110 @@ body::before {
 
       <div class="compass-frame">
         <svg class="compass-svg" viewBox="0 0 300 300" id="compassSvg">
-          <!-- Concentric rings -->
-          <circle cx="150" cy="150" r="128" fill="none" stroke="rgba(35,31,28,0.1)" stroke-width="0.5"/>
-          <circle cx="150" cy="150" r="100" fill="none" stroke="rgba(35,31,28,0.1)" stroke-width="0.5" stroke-dasharray="2 3"/>
-          <circle cx="150" cy="150" r="72" fill="none" stroke="rgba(35,31,28,0.1)" stroke-width="0.5" stroke-dasharray="1 3"/>
-          <circle cx="150" cy="150" r="44" fill="none" stroke="rgba(35,31,28,0.08)" stroke-width="0.5"/>
 
-          <!-- Cardinal tick marks -->
-          <g id="compassTicks"></g>
+          <!-- Parchment face (fixed, doesn't rotate) -->
+          <defs>
+            <radialGradient id="compass-face" cx="50%" cy="48%" r="55%">
+              <stop offset="0%"  stop-color="#FDF9EE"/>
+              <stop offset="72%" stop-color="#F2EAD4"/>
+              <stop offset="100%" stop-color="#E5DCC4"/>
+            </radialGradient>
+          </defs>
+          <circle cx="150" cy="150" r="144" fill="url(#compass-face)"/>
 
-          <!-- Cardinal labels -->
-          <text x="150" y="20" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="10" font-weight="600" fill="#231F1C" letter-spacing="1">N</text>
-          <text x="283" y="154" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="9" fill="#7A7266">E</text>
-          <text x="150" y="288" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="9" fill="#7A7266">S</text>
-          <text x="17" y="154" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="9" fill="#7A7266">W</text>
+          <!-- ═══════ ROTATOR — everything here turns with the phone's heading ═══════ -->
+          <g id="compassRotator" style="transform-origin: 150px 150px; transition: transform 0.16s linear;">
 
-          <!-- Distance scale annotations -->
-          <text x="150" y="57" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="7" fill="#A89E8F" letter-spacing="0.5">250m</text>
-          <text x="150" y="85" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="7" fill="#A89E8F" letter-spacing="0.5">150m</text>
+            <!-- Twin ornamental border rings -->
+            <circle cx="150" cy="150" r="142" fill="none" stroke="rgba(35,31,28,0.35)" stroke-width="0.9"/>
+            <circle cx="150" cy="150" r="138" fill="none" stroke="rgba(35,31,28,0.22)" stroke-width="0.4"/>
+            <circle cx="150" cy="150" r="113" fill="none" stroke="rgba(35,31,28,0.28)" stroke-width="0.5"/>
+            <circle cx="150" cy="150" r="109" fill="none" stroke="rgba(35,31,28,0.18)" stroke-width="0.35"/>
 
-          <!-- Hotspot dots (dynamically inserted) -->
-          <g id="compassDots"></g>
+            <!-- Degree tick scale (between r=118 and r=138, inserted by JS) -->
+            <g id="compassTicks"></g>
 
-          <!-- Bearing needle to current target -->
-          <g id="compassNeedle" style="transform-origin: 150px 150px; transition: transform 1s cubic-bezier(0.22, 0.61, 0.36, 1);">
-            <line x1="150" y1="150" x2="150" y2="30" stroke="#B8441F" stroke-width="1.5" stroke-linecap="round"/>
-            <polygon points="150,22 146,34 150,31 154,34" fill="#B8441F"/>
+            <!-- ─── COMPASS ROSE — 8-point star ─── -->
+            <g id="compassRose">
+              <!-- Cardinals (rTip=100, diamond) — filled on one side, outlined on the other, alternating -->
+              <!-- N: (150,150) → (136,126) → (150,50) → (164,126) -->
+              <polygon points="150,150 136,126 150,50" fill="rgba(35,31,28,0.82)"/>
+              <polygon points="150,150 150,50 164,126" fill="none" stroke="rgba(35,31,28,0.82)" stroke-width="0.7" stroke-linejoin="round"/>
+              <!-- E: (150,150) → (174,136) → (250,150) → (174,164) -->
+              <polygon points="150,150 174,136 250,150" fill="none" stroke="rgba(35,31,28,0.82)" stroke-width="0.7" stroke-linejoin="round"/>
+              <polygon points="150,150 250,150 174,164" fill="rgba(35,31,28,0.82)"/>
+              <!-- S: (150,150) → (164,174) → (150,250) → (136,174) -->
+              <polygon points="150,150 164,174 150,250" fill="rgba(35,31,28,0.82)"/>
+              <polygon points="150,150 150,250 136,174" fill="none" stroke="rgba(35,31,28,0.82)" stroke-width="0.7" stroke-linejoin="round"/>
+              <!-- W: (150,150) → (126,164) → (50,150) → (126,136) -->
+              <polygon points="150,150 126,164 50,150" fill="none" stroke="rgba(35,31,28,0.82)" stroke-width="0.7" stroke-linejoin="round"/>
+              <polygon points="150,150 50,150 126,136" fill="rgba(35,31,28,0.82)"/>
+
+              <!-- Intercardinals (rTip=68, shorter diamond) -->
+              <!-- NE -->
+              <polygon points="150,150 157,131 198,102" fill="rgba(35,31,28,0.55)"/>
+              <polygon points="150,150 198,102 169,143" fill="none" stroke="rgba(35,31,28,0.55)" stroke-width="0.6" stroke-linejoin="round"/>
+              <!-- SE -->
+              <polygon points="150,150 169,157 198,198" fill="none" stroke="rgba(35,31,28,0.55)" stroke-width="0.6" stroke-linejoin="round"/>
+              <polygon points="150,150 198,198 157,169" fill="rgba(35,31,28,0.55)"/>
+              <!-- SW -->
+              <polygon points="150,150 143,169 102,198" fill="rgba(35,31,28,0.55)"/>
+              <polygon points="150,150 102,198 131,157" fill="none" stroke="rgba(35,31,28,0.55)" stroke-width="0.6" stroke-linejoin="round"/>
+              <!-- NW -->
+              <polygon points="150,150 131,143 102,102" fill="none" stroke="rgba(35,31,28,0.55)" stroke-width="0.6" stroke-linejoin="round"/>
+              <polygon points="150,150 102,102 143,131" fill="rgba(35,31,28,0.55)"/>
+            </g>
+
+            <!-- ─── FLEUR-DE-LYS at N (tops the cardinal N point) ─── -->
+            <g id="fleurDeLys" fill="rgba(35,31,28,0.88)">
+              <!-- horizontal ribbon/band at base -->
+              <rect x="138" y="46" width="24" height="3" rx="0.5"/>
+              <!-- central teardrop petal -->
+              <path d="M 150 46 Q 146 32 149 22 Q 150 18 151 22 Q 154 32 150 46 Z"/>
+              <!-- left curled petal -->
+              <path d="M 150 40 Q 136 34 132 46 L 138 46 Q 138 40 148 42 Z"/>
+              <!-- right curled petal -->
+              <path d="M 150 40 Q 164 34 168 46 L 162 46 Q 162 40 152 42 Z"/>
+              <!-- tiny crown bead at very top -->
+              <circle cx="150" cy="16" r="2" fill="rgba(35,31,28,0.85)"/>
+              <line x1="146" y1="20" x2="154" y2="20" stroke="rgba(35,31,28,0.85)" stroke-width="1.1" stroke-linecap="round"/>
+            </g>
+
+            <!-- ─── CARDINAL LETTERS (outer letter band, no tick overlap) ─── -->
+            <text x="150" y="133" text-anchor="middle" font-family="'Fraunces', serif" font-size="15" font-weight="600" font-style="italic" fill="#231F1C">N</text>
+            <text x="264" y="155" text-anchor="middle" font-family="'Fraunces', serif" font-size="14" font-weight="500" font-style="italic" fill="#231F1C">E</text>
+            <text x="150" y="172" text-anchor="middle" font-family="'Fraunces', serif" font-size="14" font-weight="500" font-style="italic" fill="#231F1C">S</text>
+            <text x="36"  y="155" text-anchor="middle" font-family="'Fraunces', serif" font-size="14" font-weight="500" font-style="italic" fill="#231F1C">W</text>
+
+            <!-- Intercardinals (smaller, 45° positions on letter-band inner side) -->
+            <text x="231" y="80" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="8.5" font-weight="500" letter-spacing="0.1em" fill="rgba(35,31,28,0.55)">NE</text>
+            <text x="231" y="228" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="8.5" font-weight="500" letter-spacing="0.1em" fill="rgba(35,31,28,0.55)">SE</text>
+            <text x="69"  y="228" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="8.5" font-weight="500" letter-spacing="0.1em" fill="rgba(35,31,28,0.55)">SW</text>
+            <text x="69"  y="80" text-anchor="middle" font-family="'IBM Plex Mono', monospace" font-size="8.5" font-weight="500" letter-spacing="0.1em" fill="rgba(35,31,28,0.55)">NW</text>
+
+            <!-- Hotspot dots (dynamically inserted) -->
+            <g id="compassDots"></g>
+
+            <!-- Bearing needle — rotates independently within the rose -->
+            <g id="compassNeedle" style="transform-origin: 150px 150px; transition: transform 0.9s cubic-bezier(0.22, 0.61, 0.36, 1);">
+              <!-- Shaft -->
+              <line x1="150" y1="152" x2="150" y2="60" stroke="#B8441F" stroke-width="1.7" stroke-linecap="round"/>
+              <!-- Ornate arrow head (filled triangle + inner chevron) -->
+              <polygon points="150,48 143,68 150,64 157,68" fill="#B8441F"/>
+              <polygon points="150,54 147,65 150,62 153,65" fill="#8C3319"/>
+              <!-- Tail weight (counter-balance lozenge) -->
+              <polygon points="150,152 147,162 150,174 153,162" fill="rgba(35,31,28,0.55)"/>
+            </g>
+
           </g>
+          <!-- ═══════ END ROTATOR ═══════ -->
 
-          <!-- Center marker (you) -->
+          <!-- Central pivot boss (FIXED — never rotates) -->
           <g id="compassCenter">
-            <circle cx="150" cy="150" r="6" fill="#231F1C"/>
-            <circle cx="150" cy="150" r="12" fill="none" stroke="#231F1C" stroke-width="0.8" stroke-dasharray="1 2"/>
+            <circle cx="150" cy="150" r="11" fill="var(--paper-light, #F7F1E1)" stroke="#231F1C" stroke-width="1.1"/>
+            <circle cx="150" cy="150" r="8" fill="none" stroke="#231F1C" stroke-width="0.4"/>
+            <circle cx="150" cy="150" r="5" fill="none" stroke="#231F1C" stroke-width="0.3"/>
+            <circle cx="150" cy="150" r="2" fill="#231F1C"/>
           </g>
         </svg>
 
@@ -4559,26 +4631,36 @@ function renderMasthead() {
 function renderCompassTicks() {
   const group = document.getElementById('compassTicks');
   group.innerHTML = '';
+  const NS = 'http://www.w3.org/2000/svg';
+  // Ticks live in the outer degree band (r 138→122), well away from the
+  // letter ring that sits between r 108 and r 118. No overlap.
+  const rOuter = 138;
   for (let i = 0; i < 72; i++) {
     const angle = i * 5;
-    const major = i % 18 === 0;
-    const mid = i % 6 === 0;
-    const len = major ? 10 : mid ? 6 : 3;
-    const r1 = 140;
-    const r2 = r1 - len;
+    const major = i % 18 === 0;          // every 90° (cardinal axis)
+    const mid = !major && i % 6 === 0;   // every 30°
+    const small = !major && !mid && i % 2 === 0; // every 10°
+    const minor = !major && !mid && !small;      // every 5°
+
+    // Suppress the tick that sits exactly on a cardinal axis — the
+    // compass-rose point and the letter already mark the direction.
+    if (major) continue;
+
+    const len = mid ? 9 : small ? 6 : 3;
+    const rInner = rOuter - len;
     const rad = (angle - 90) * Math.PI / 180;
-    const x1 = 150 + r1 * Math.cos(rad);
-    const y1 = 150 + r1 * Math.sin(rad);
-    const x2 = 150 + r2 * Math.cos(rad);
-    const y2 = 150 + r2 * Math.sin(rad);
-    const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+    const x1 = 150 + rOuter * Math.cos(rad);
+    const y1 = 150 + rOuter * Math.sin(rad);
+    const x2 = 150 + rInner * Math.cos(rad);
+    const y2 = 150 + rInner * Math.sin(rad);
+    const line = document.createElementNS(NS, 'line');
     line.setAttribute('x1', x1);
     line.setAttribute('y1', y1);
     line.setAttribute('x2', x2);
     line.setAttribute('y2', y2);
-    line.setAttribute('stroke', major ? '#231F1C' : '#7A7266');
-    line.setAttribute('stroke-width', major ? '1.2' : '0.5');
-    line.setAttribute('opacity', major ? '0.6' : '0.35');
+    line.setAttribute('stroke', mid ? '#231F1C' : '#4A433C');
+    line.setAttribute('stroke-width', mid ? '0.9' : small ? '0.5' : '0.3');
+    line.setAttribute('opacity', mid ? '0.58' : small ? '0.4' : '0.25');
     group.appendChild(line);
   }
 }
@@ -4675,6 +4757,63 @@ function renderCompassNeedle() {
   const b = bearingDegrees(u, target.coords);
   needle.style.opacity = 1;
   needle.style.transform = `rotate(${b}deg)`;
+}
+
+// Rotate the compass face so 'N' aligns with real-world north, using the
+// device's compass heading (iOS webkitCompassHeading or Android alpha).
+function applyCompassHeading() {
+  const rotator = document.getElementById('compassRotator');
+  if (!rotator) return;
+  if (state.userHeading == null) {
+    rotator.style.transform = '';
+    return;
+  }
+  rotator.style.transform = `rotate(${-state.userHeading}deg)`;
+}
+
+function bindDeviceOrientation() {
+  if (state._orientationBound) return;
+  state._orientationBound = true;
+  const handler = e => {
+    let heading = null;
+    if (e.webkitCompassHeading != null) {
+      heading = e.webkitCompassHeading; // iOS: already clockwise from true north
+    } else if (e.absolute && e.alpha != null) {
+      heading = (360 - e.alpha) % 360;
+    } else if (e.alpha != null) {
+      heading = (360 - e.alpha) % 360;
+    }
+    if (heading != null && !isNaN(heading)) {
+      state.userHeading = heading;
+      applyCompassHeading();
+    }
+  };
+  // Prefer absolute orientation where available
+  if ('ondeviceorientationabsolute' in window) {
+    window.addEventListener('deviceorientationabsolute', handler);
+  }
+  window.addEventListener('deviceorientation', handler);
+}
+
+// iOS 13+ requires explicit user-gesture permission for orientation.
+async function requestOrientationPermission() {
+  if (typeof DeviceOrientationEvent !== 'undefined'
+      && typeof DeviceOrientationEvent.requestPermission === 'function') {
+    try {
+      const result = await DeviceOrientationEvent.requestPermission();
+      return result === 'granted';
+    } catch (e) {
+      return false;
+    }
+  }
+  // Android / desktop / older iOS — no permission gate
+  return true;
+}
+
+async function enableCompassRotation() {
+  const ok = await requestOrientationPermission();
+  if (ok) bindDeviceOrientation();
+  return ok;
 }
 
 function renderTargetCard() {
@@ -5209,16 +5348,17 @@ function bindUI() {
     if (t) markVisited(t.id);
   });
 
-  // Onboarding — "Begin the Walk" scrolls to the compass page and starts GPS.
+  // Onboarding — "Swipe to Walk" scrolls to the compass page, requests
+  // location + compass-orientation permissions, and starts GPS.
   document.getElementById('startBtn').addEventListener('click', () => {
     goToPage('compass', true);
-    // updateActiveViewFromScroll will kick off GPS; also start it immediately
-    // so the permission prompt appears before the scroll settles.
     if (!state.watchStarted) {
       state.watchStarted = true;
       try { localStorage.setItem('echo.onboarded', '1'); } catch (e) {}
       startWatching();
     }
+    // Fire-and-forget: iOS 13+ permission request must come from a user gesture.
+    enableCompassRotation();
   });
 
   // Close player on Escape (desktop testing)
@@ -5347,15 +5487,22 @@ function init() {
     updateActiveViewFromScroll();
   });
 
-  // DeviceOrientation (for rotating compass) — optional
-  if (window.DeviceOrientationEvent) {
-    window.addEventListener('deviceorientation', e => {
-      if (e.webkitCompassHeading != null) {
-        state.userHeading = e.webkitCompassHeading;
-      } else if (e.alpha != null) {
-        state.userHeading = 360 - e.alpha;
-      }
-    });
+  // On Android / older iOS the orientation events fire without a prompt,
+  // so bind immediately. iOS 13+ needs a user gesture — handled in the
+  // "Swipe to Walk" button and a tap on the compass face.
+  if (typeof DeviceOrientationEvent === 'undefined'
+      || typeof DeviceOrientationEvent.requestPermission !== 'function') {
+    bindDeviceOrientation();
+  }
+
+  // Tapping the compass face will also prompt for orientation permission
+  // (iOS 13+) — gives the user a reliable second path if they swiped past
+  // onboarding instead of tapping the button.
+  const compassFrame = document.querySelector('.compass-frame');
+  if (compassFrame) {
+    compassFrame.addEventListener('click', () => {
+      if (!state._orientationBound) enableCompassRotation();
+    }, { once: false });
   }
 }
 
