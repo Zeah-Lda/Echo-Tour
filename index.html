@@ -4759,40 +4759,89 @@ function renderCompassNeedle() {
   needle.style.transform = `rotate(${b}deg)`;
 }
 
-// Rotate the compass face so 'N' aligns with real-world north, using the
-// device's compass heading (iOS webkitCompassHeading or Android alpha).
+// Rotate the compass face so 'N' aligns with real-world north, using
+// the device's compass heading. We track a CUMULATIVE rotation so the
+// 0°/360° wrap never causes a 358° back-spin — we always advance by
+// the shortest signed delta.
+let _compassLastHeading = null;
+let _compassCumRotation = 0;
+
 function applyCompassHeading() {
   const rotator = document.getElementById('compassRotator');
   if (!rotator) return;
-  if (state.userHeading == null) {
+  const h = state.userHeading;
+  if (h == null) {
+    _compassLastHeading = null;
+    _compassCumRotation = 0;
     rotator.style.transform = '';
     return;
   }
-  rotator.style.transform = `rotate(${-state.userHeading}deg)`;
+  if (_compassLastHeading == null) {
+    // First reading — jump straight to it (no animation)
+    _compassCumRotation = -h;
+    rotator.style.transition = 'none';
+    rotator.style.transform = `rotate(${_compassCumRotation}deg)`;
+    // Restore transition on the next frame
+    requestAnimationFrame(() => { rotator.style.transition = ''; });
+  } else {
+    // Take the shortest signed delta in [-180, 180] and accumulate it.
+    let delta = h - _compassLastHeading;
+    if (delta > 180)  delta -= 360;
+    if (delta < -180) delta += 360;
+    // The face turns OPPOSITE to the phone's rotation.
+    _compassCumRotation -= delta;
+    rotator.style.transform = `rotate(${_compassCumRotation}deg)`;
+  }
+  _compassLastHeading = h;
 }
 
 function bindDeviceOrientation() {
   if (state._orientationBound) return;
   state._orientationBound = true;
-  const handler = e => {
-    let heading = null;
-    if (e.webkitCompassHeading != null) {
-      heading = e.webkitCompassHeading; // iOS: already clockwise from true north
-    } else if (e.absolute && e.alpha != null) {
-      heading = (360 - e.alpha) % 360;
-    } else if (e.alpha != null) {
-      heading = (360 - e.alpha) % 360;
-    }
-    if (heading != null && !isNaN(heading)) {
-      state.userHeading = heading;
-      applyCompassHeading();
-    }
+
+  // Rate-limit to one update per animation frame so bursty sensor events
+  // don't fight each other through the CSS transition.
+  let pendingHeading = null;
+  let raf = null;
+  const flush = () => {
+    raf = null;
+    if (pendingHeading == null) return;
+    state.userHeading = pendingHeading;
+    pendingHeading = null;
+    applyCompassHeading();
   };
-  // Prefer absolute orientation where available
+  const push = h => {
+    pendingHeading = h;
+    if (raf == null) raf = requestAnimationFrame(flush);
+  };
+
+  const toHeading = e => {
+    // iOS: true-north clockwise heading, ready to use.
+    if (typeof e.webkitCompassHeading === 'number') return e.webkitCompassHeading;
+    // Android / others: alpha is CCW from north when `absolute` is true.
+    if (typeof e.alpha === 'number') return (360 - e.alpha) % 360;
+    return null;
+  };
+
+  // Prefer the absolute event where available; fall back to plain
+  // deviceorientation. Bind only ONE source so values don't fight.
+  let bound = false;
   if ('ondeviceorientationabsolute' in window) {
-    window.addEventListener('deviceorientationabsolute', handler);
+    window.addEventListener('deviceorientationabsolute', e => {
+      const h = toHeading(e);
+      if (h != null && !isNaN(h)) push(h);
+    }, { passive: true });
+    bound = true;
   }
-  window.addEventListener('deviceorientation', handler);
+  window.addEventListener('deviceorientation', e => {
+    // On iOS (no 'absolute' event), this is the primary source.
+    // On Chrome-Android where 'absolute' also fires, skip non-absolute
+    // events — they are relative-to-initial-orientation and would jitter
+    // the compass.
+    if (bound && !e.absolute && typeof e.webkitCompassHeading !== 'number') return;
+    const h = toHeading(e);
+    if (h != null && !isNaN(h)) push(h);
+  }, { passive: true });
 }
 
 // iOS 13+ requires explicit user-gesture permission for orientation.
