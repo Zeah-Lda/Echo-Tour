@@ -2192,7 +2192,7 @@ body::before {
         <div class="ob-rule-num">IV.</div>
         <div class="ob-rule-body">
           <strong>The compass will point</strong>
-          <span>No map, no chatter. Only a needle and the distance between you and what comes next.</span>
+          <span>No map, no chatter. Only a compass and the distance between you and what comes next.</span>
         </div>
       </div>
     </div>
@@ -2361,7 +2361,7 @@ body::before {
           </g>
         </svg>
 
-        <div class="compass-sweep"></div>
+        <div class="compass-sweep" style="display:none"></div>
 
         <div class="compass-center-label">
           <div class="distance-label">DISTANCE TO NEXT</div>
@@ -2573,11 +2573,11 @@ body::before {
 
   <div class="setting-row">
     <div class="setting-info">
-      <div class="setting-title">Compass Sweep</div>
-      <div class="setting-desc">The decorative radar animation around the compass.</div>
+      <div class="setting-title">Radar Sweep</div>
+      <div class="setting-desc">A decorative red sweep that circles the compass face.</div>
     </div>
     <div class="setting-control">
-      <div class="toggle on" id="toggleSweep"></div>
+      <div class="toggle" id="toggleSweep"></div>
     </div>
   </div>
 
@@ -4445,7 +4445,7 @@ const state = {
     triggerRadius: 30,
     autoPlay: true,
     haptics: true,
-    sweep: true,
+    sweep: false,
   },
   player: {
     open: false,
@@ -4961,30 +4961,17 @@ function renderNearbyList() {
   const target = nextHotspot();
   const u = currentUserCoords();
 
-  // Show the upcoming stops in itinerary ORDER (starting from the next
-  // unvisited one), not by nearest distance. Sequential unlock: only the
-  // very next stop is playable; everything after is locked until the
-  // video before it has been seen.
-  const startIdx = target ? HOTSPOTS.findIndex(h => h.id === target.id) : HOTSPOTS.length;
-  const upcoming = startIdx < 0 ? [] : HOTSPOTS.slice(startIdx, startIdx + 5);
-
-  if (upcoming.length === 0) {
-    list.innerHTML = `
-      <div style="padding: 20px 12px; text-align: center;">
-        <div style="font-family: var(--f-body); font-style: italic; font-size: 13.5px; color: var(--ink-faded); font-weight: 300;">
-          Journey complete — all stops visited.
-        </div>
-      </div>
-    `;
-    return;
-  }
-
-  list.innerHTML = upcoming.map((h, i) => {
-    const isActive = h.id === target?.id;      // next-in-line, unlocked
-    const isLocked = !isActive;                 // everything after is locked
+  // Show the FULL itinerary in order (prologue + the 7 stops). Each row
+  // is either visited, active (next-in-line, unlocked), or locked.
+  // The prologue (№00) is always visible at the top regardless of state.
+  list.innerHTML = HOTSPOTS.map(h => {
+    const isVisited = state.visited.has(h.id);
+    const isActive = h.id === target?.id;
+    const isLocked = !isVisited && !isActive;
     const distText = u ? formatDistance(distanceMetres(u, h.coords)) : '—';
 
     const classes = ['nearby-row'];
+    if (isVisited) classes.push('visited');
     if (isActive) classes.push('active');
     if (isLocked) classes.push('locked');
 
